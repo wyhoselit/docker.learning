@@ -3,8 +3,8 @@ services:
   web:
     # replace username/repo:tag with your name and image details
     # Pull the image we uploaded in step 2 from the registry.
-    # image: oselit/getstarted:part2
-    image: friendlyhello
+    image: oselit/getstarted:part2.1
+    # image: friendlyhello
     deploy:
       # Run 5 instances of that image as a service called web, limiting each one to use, at most, 10% of the CPU (across all cores), and 50MB of RAM.
       replicas: 2

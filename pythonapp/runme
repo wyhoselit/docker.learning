@@ -18,7 +18,7 @@ docker tag friendlyhello oselit/get-started:part2
 
 docker images
 # Publish the image
-docker push oselit/get-started:part2
+docker push oselit/get-started:part2.1
 # Pull and run the image from the remote repository
 # docker run -p 4000:80 oselit/get-started:part2
 docker run -p 4000:80 oselit/get-started:latest
