@@ -1,0 +1,36 @@
+#!/bin/bash
+# https://docs.docker.com/get-started/part3/
+#service
+# prerequire
+# https://github.com/docker/compose/releases
+# we scale our application and enable load-balancing. To do this, we must go one level up in the hierarchy of a distributed application: the service.
+# Run your new load-balanced app
+docker swarm init
+# Swarm initialized: current node (03ras3jrwues48rvfeus7l1ek) is now a manager.
+#
+# To add a worker to this swarm, run the following command:
+#
+#     docker swarm join --token SWMTKN-1-3i96o8vzratw99xxxz4wbc558w9s4w9tlolcxzl3wjvvqek2hb-aflos47xwzk60tegn8i8mwcvb 192.168.31.110:2377
+#
+# To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+# Now let’s run it. You have to give your app a name. Here, it is set to getstartedlab:
+docker stack deploy -c docker-compose.yml getstartedlab
+# Our single service stack is running 5 container instances of our deployed image on one host. Let’s investigate.
+docker service ls
+# ID                  NAME                MODE                REPLICAS            IMAGE                  PORTS
+# c0qrerpqluzu        getstartedlab_web   replicated          5/5                 friendlyhello:latest   *:4000->80/tcp
+# A single container running in a service is called a task. Tasks are given unique IDs that numerically increment, up to the number of replicas you defined in docker-compose.yml. List the tasks for your service:
+docker service ps getstartedlab_web
+# Tasks also show up if you just list all the containers on your system, though that will not be filtered by service:
+docker container ls -q
+ # you’ll see the container ID change, demonstrating the load-balancing;
+curl -4 http://localhost:4000
+# Scale the app
+# You can scale the app by changing the replicas value in docker-compose.yml, saving the change, and re-running the docker stack deploy command:
+docker stack deploy -c docker-compose.yml getstartedlab
+docker service ps getstartedlab_web
+docker container ls -q
+# Take down the app and the swarm
+docker stack rm getstartedlab
+# Take down the swarm.
+docker swarm leave --force

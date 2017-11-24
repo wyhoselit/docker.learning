@@ -42,9 +42,3 @@ docker ps
 # docker tag <image> username/repository:tag  # Tag <image> for upload to registry
 # docker push username/repository:tag            # Upload tagged image to registry
 # docker run username/repository:tag                   # Run image from a registry
-
-
-#service
-# prerequire
-# https://github.com/docker/compose/releases
-# we scale our application and enable load-balancing. To do this, we must go one level up in the hierarchy of a distributed application: the service.
