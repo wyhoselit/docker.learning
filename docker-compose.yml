@@ -3,11 +3,11 @@ services:
   web:
     # replace username/repo:tag with your name and image details
     # Pull the image we uploaded in step 2 from the registry.
-    image: oselit/getstarted:part2.1
+    image: oselit/get-started:part2.2
     # image: friendlyhello
     deploy:
       # Run 5 instances of that image as a service called web, limiting each one to use, at most, 10% of the CPU (across all cores), and 50MB of RAM.
-      replicas: 2
+      replicas: 5
       resources:
         limits:
           cpus: "0.1"
@@ -20,6 +20,40 @@ services:
       - "4000:80"
     networks:
       # Instruct web’s containers to share port 80 via a load-balanced network called webnet. (Internally, the containers themselves will publish to web’s port 80 at an ephemeral port.)
+      - webnet
+ # First, let’s add a free visualizer service that lets us look at how our swarm is scheduling containers.
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      # giving the visualizer access to the host’s socket file for Docker
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        # ensuring that this service only ever runs on a swarm manager – never a worker. That’s because this container, built from an open source project created by Docker, displays Docker services running on a swarm in a diagram.
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+  redis:
+      # add a Redis database for storing app data.
+      # Redis has an official image in the Docker library and has been granted the short image name of just redis, so no username/repo notation here
+    image: redis
+    ports:
+       # The Redis port, 6379, has been pre-configured by Redis to be exposed from the container to the host,
+      - "6379:6379"
+    volumes:
+      # accesses an arbitrary directory in the host’s file system as /data inside the container, which is where Redis stores data.
+      # Together, this is creating a “source of truth” in your host’s physical filesystem for the Redis data. Without this, Redis would store its data in /data inside the container’s filesystem, which would get wiped out if that container were ever redeployed.
+      # The placement constraint you put on the Redis service, ensuring that it always uses the same host.
+# The volume you created that lets the container access ./data (on the host) as /data (inside the Redis container). While containers come and go, the files stored on ./data on the specified host will persist, enabling continuity.
+      - /home/docker/data:/data
+    deploy:
+      placement:
+         # always runs on the manager, so it’s always using the same filesystem.
+        constraints: [node.role == manager]
+    command: redis-server --appendonly yes
+    networks:
       - webnet
 networks:
   webnet:

@@ -14,11 +14,11 @@ docker container ls
 
 #Share your image
 # docker login
-docker tag friendlyhello oselit/get-started:part2
+docker tag friendlyhello oselit/get-started:part2.2
 
 docker images
 # Publish the image
-docker push oselit/get-started:part2.1
+docker push oselit/get-started:part2.2
 # Pull and run the image from the remote repository
 # docker run -p 4000:80 oselit/get-started:part2
 docker run -p 4000:80 oselit/get-started:latest
