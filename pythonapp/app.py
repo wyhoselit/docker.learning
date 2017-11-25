@@ -2,12 +2,14 @@ from flask import Flask
 from redis import Redis, RedisError
 import os
 import socket
-import time;
+import time
 
 # Connect to Redis
 redis = Redis(host="redis", db=0, socket_connect_timeout=2, socket_timeout=2)
 
 app = Flask(__name__)
+
+localtime = time.asctime(time.localtime(time.time()))
 
 @app.route("/")
 def hello():
@@ -15,7 +17,6 @@ def hello():
         visits = redis.incr("counter")
     except RedisError:
         visits = "<i>cannot connect to Redis, counter disabled</i>"
-        localtime = time.asctime( time.localtime(time.time()) )
 
     html = "<h3>Hello {name}!</h3>" \
            "<b>Hostname:</b> {hostname}<br/>" \

@@ -10,3 +10,16 @@ docker service ps getstartedlab_web
 docker-machine ls
 curl -4 http://192.168.99.100:8080/
 # The visualizer is a standalone service that can run in any app that includes it in the stack. It doesn’t depend on anything else. Now let’s create a service that does have a dependency: the Redis service that will provide a visitor counter.
+# Persist the data
+# Save this new docker-compose.yml file, which finally adds a Redis service.
+# Create a ./data directory on the manager:
+docker-machine ssh myvm1 "mkdir ./data"
+# Make sure your shell is configured to talk to myvm1 (full examples are here).
+docker-machine ls
+docker-machine env myvm1
+eval $(docker-machine env myvm1)
+# Run docker stack deploy one more time.
+docker stack deploy -c docker-compose.yml getstartedlab
+docker service ls
+docker stack ps getstartedlab
+ # Also, check the visualizer at port 8080 on either node’s IP address, and you’ll see the redis service running along with the web and visualizer services.
