@@ -3,11 +3,11 @@ services:
   web:
     # replace username/repo:tag with your name and image details
     # Pull the image we uploaded in step 2 from the registry.
-    image: oselit/getstarted:part2.1
+    image: oselit/get-started:part2.1
     # image: friendlyhello
     deploy:
       # Run 5 instances of that image as a service called web, limiting each one to use, at most, 10% of the CPU (across all cores), and 50MB of RAM.
-      replicas: 2
+      replicas: 5
       resources:
         limits:
           cpus: "0.1"
@@ -20,6 +20,20 @@ services:
       - "4000:80"
     networks:
       # Instruct web’s containers to share port 80 via a load-balanced network called webnet. (Internally, the containers themselves will publish to web’s port 80 at an ephemeral port.)
+      - webnet
+ # First, let’s add a free visualizer service that lets us look at how our swarm is scheduling containers.
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      # giving the visualizer access to the host’s socket file for Docker
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        # ensuring that this service only ever runs on a swarm manager – never a worker. That’s because this container, built from an open source project created by Docker, displays Docker services running on a swarm in a diagram.
+        constraints: [node.role == manager]
+    networks:
       - webnet
 networks:
   webnet:
