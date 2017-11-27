@@ -1,0 +1,38 @@
+#!/bin/bash
+# Create a new directory for your application.
+# make a directory and cd to it
+
+# Create a new file called Dockerfile in your project directory.
+# Create a requirements.txt in your project directory.
+# This file is used by the RUN pip install -r requirements.txt command in your Dockerfile.
+# Create a file called docker-compose.yml in your project directory.
+
+# Create the Django project by running the docker-compose run command as follows.
+ docker-compose run web django-admin.py startproject composeexample .
+# django-admin.py startproject composeexample in a container, using the web service’s image and configuration.
+
+ # web image doesn’t exist yet, Compose builds it from the current directory, as specified by the build: . line in docker-compose.yml.
+ # Once the web service image is built, Compose runs it and executes the django-admin.py startproject command in the container. This command instructs Django to create a set of files and directories representing a Django project.
+
+# After the docker-compose command completes, list the contents of your project.
+# If you are running Docker on Linux, the files django-admin created are owned by root. This happens because the container runs as the root user. Change the ownership of the new files.
+
+sudo chown -R $USER:$USER .
+# Connect the database
+# In your project directory, edit the composeexample/settings.py file.
+#
+# Replace the DATABASES = ... with the following:
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'HOST': 'db',
+#         'PORT': 5432,
+#     }
+# }
+# These settings are determined by the postgres Docker image specified in docker-compose.yml.
+# Run the docker-compose up command from the top level directory for your project.
+ docker-compose up
+docker ps
